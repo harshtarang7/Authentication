@@ -6,7 +6,7 @@ import authRouter from './routes/auth.route.js';
 mongoose.connect("mongodb://localhost:27017/user-auth")
 .then(()=>console.log('connected to mongo db'))
 .catch((err)=>{
-    console.log(err)
+    console.log(err);
 })
 
 const app = express();
@@ -17,5 +17,15 @@ app.listen(3000,()=>{
     console.log("Server is running on port 3000");
 })
 
-app.use('/api/user',userRouter)
-app.use('/api/auth',authRouter)
+app.use('/api/user',userRouter);
+app.use('/api/auth',authRouter);
+
+app.use((err,req,res,next)=>{
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Invalid Server Error!'
+    return res.status(statusCode).json({
+        success:false,
+        message,
+        statusCode,
+    });
+});
